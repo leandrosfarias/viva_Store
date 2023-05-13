@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:viva_store/screens/admin_dashboard.dart';
+import 'package:viva_store/screens/category_management.dart';
+import 'package:viva_store/screens/login.dart';
+import 'package:viva_store/config/color_palette.dart';
+import 'package:viva_store/screens/product_management.dart';
+import 'package:viva_store/screens/product_management2.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,55 +18,49 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Viva Store',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        // primarySwatch: Colors.blue, //#3a5f73
+        primaryColor: ColorPalette.primaryColor,
+        backgroundColor: ColorPalette.backgroundColor,
+        // fontFamily: 'RobotoMono'
       ),
-      home: const MyHomePage(title: 'Viva Store'),
+      home: ProductManagment(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
-              'Viva Store',
-            ),
-          ],
-        ),
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
-    );
-  }
-}
+// class MyHomePage extends StatefulWidget {
+//   const MyHomePage({super.key, required this.title});
+//
+//   final String title;
+//
+//   @override
+//   State<MyHomePage> createState() => _MyHomePageState();
+// }
+//
+// class _MyHomePageState extends State<MyHomePage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(widget.title),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: const <Widget>[
+//             Text(
+//               'Viva Store',
+//             ),
+//           ],
+//         ),
+//       ),
+//       // floatingActionButton: FloatingActionButton(
+//       //   onPressed: () {},
+//       //   tooltip: 'Increment',
+//       //   child: const Icon(Icons.add),
+//       // ),
+//     );
+//   }
+// }
