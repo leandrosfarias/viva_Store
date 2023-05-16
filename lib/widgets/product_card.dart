@@ -10,6 +10,9 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
         clipBehavior: Clip.antiAlias,
         elevation: 5,
         child: Expanded(
@@ -49,7 +52,6 @@ class ProductCard extends StatelessWidget {
               ),
             ],
           ),
-        )
-    );
+        ));
   }
 }

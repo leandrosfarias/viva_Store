@@ -11,7 +11,7 @@ class ProductGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get the list of products for this category
-    List<Product> products = Product.getProductsByCategory(category);
+    List<Product> products = Product.getProductsByCategory();
 
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
