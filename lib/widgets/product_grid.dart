@@ -10,20 +10,29 @@ class ProductGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the list of products for this category
-    List<Product> products = Product.getProductsByCategory();
-
-    return GridView.builder(
-      padding: const EdgeInsets.all(10.0),
-      itemCount: products.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 3 / 4,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 10,
-      ),
-      itemBuilder: (context, index) {
-        return ProductCard(product: products[index]);
+    return FutureBuilder<List<Product>>(
+      future: Product.getProductsByCategory(category),
+      builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          List<Product> products = snapshot.data ?? [];
+          return GridView.builder(
+            padding: const EdgeInsets.all(10.0),
+            itemCount: products.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 3 / 4,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 10,
+            ),
+            itemBuilder: (context, index) {
+              return ProductCard(product: products[index]);
+            },
+          );
+        }
       },
     );
   }

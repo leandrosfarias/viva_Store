@@ -12,7 +12,7 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
+  static List<Widget> _widgetOptions = <Widget>[
     AdminDashboardW(),
     ProductManagement()
   ];
@@ -26,7 +26,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

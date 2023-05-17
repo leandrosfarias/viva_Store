@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
   String name; // Name of the product
   String description; // Description of the product
   double price; // Price of the product
   String imageUrl; // URL of the product image
-  String categoryId; // The id of the category this product belongs to
   bool isAvailable; // Availability of the product
   int stockQuantity; // Number of products in stock
 
@@ -12,91 +13,44 @@ class Product {
     required this.description,
     required this.price,
     required this.imageUrl,
-    required this.categoryId,
     this.isAvailable = false,
     this.stockQuantity = 0,
   });
 
-  static List<Product> getProductsByCategory() {
-    return [
-      Product(
-        name: 'Product 1',
-        description: 'This is product 1',
-        price: 19.99,
-        imageUrl: 'https://via.placeholder.com/150',
-        categoryId: 'tshirt',
-        isAvailable: true,
-        stockQuantity: 20,
-      ),
-    ].toList();
+  static Future<List<Product>> getProductsByCategory(String category) async {
+    print('CATEGORIA => ${category}');
+    try {
+      // print('CATEGORIA => ${category}');
+      List<Product> products = [];
+      // Obter a lista de categorias do Firestore
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('products')
+          .where('category', isEqualTo: category)
+          .get();
+      // Preencher a lista de categorias com os dados recuperados
+      print('querySnapshot.docs.length => ${querySnapshot.docs.length}');
+      for (var doc in querySnapshot.docs) {
+        Product product = Product(
+          name: doc['productName'],
+          description: doc['description'],
+          price: doc['price'],
+          imageUrl: doc['urlImage'],
+          stockQuantity: doc['stockQuantity'],
+        );
+        print('VAI ADICIONAR!!!');
+        print(product.toString());
+        products.add(product);
+      }
+      print('TAMANHO DA LISTA => ${products.length}');
+      return products;
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
-// static List<Product> getProductsByCategory(String categoryId) {
-//   List<Product> mockProducts = [
-//     Product(
-//       // id: '1',
-//       name: 'Product 1',
-//       description: 'This is product 1',
-//       price: 19.99,
-//       imageUrl: 'https://via.placeholder.com/150',
-//       categoryId: 'tshirt',
-//       isAvailable: true,
-//       stockQuantity: 20,
-//     ),
-//     Product(
-//       // id: '2',
-//       name: 'Product 1',
-//       description: 'This is product 2',
-//       price: 29.99,
-//       imageUrl: 'https://via.placeholder.com/150',
-//       categoryId: 'paintBrush',
-//       isAvailable: true,
-//       stockQuantity: 15,
-//     ),
-//     Product(
-//       // id: '1',
-//       name: 'Product 2',
-//       description: 'This is product 2',
-//       price: 19.99,
-//       imageUrl: 'https://via.placeholder.com/150',
-//       categoryId: 'tshirt',
-//       isAvailable: true,
-//       stockQuantity: 20,
-//     ),
-//     Product(
-//       // id: '1',
-//       name: 'Product 3',
-//       description: 'This is product 3',
-//       price: 19.99,
-//       imageUrl: 'https://via.placeholder.com/150',
-//       categoryId: 'tshirt',
-//       isAvailable: true,
-//       stockQuantity: 20,
-//     ),
-//     Product(
-//       // id: '1',
-//       name: 'Product 4',
-//       description: 'This is product 4',
-//       price: 19.99,
-//       imageUrl: 'https://via.placeholder.com/150',
-//       categoryId: 'tshirt',
-//       isAvailable: true,
-//       stockQuantity: 20,
-//     ),
-//     Product(
-//       // id: '1',
-//       name: 'Product 5',
-//       description: 'This is product 5',
-//       price: 19.99,
-//       imageUrl: 'https://via.placeholder.com/150',
-//       categoryId: 'tshirt',
-//       isAvailable: true,
-//       stockQuantity: 20,
-//     ),
-//     // Add more products
-//   ];
-//
-//   return mockProducts
-//       .where((product) => product.categoryId == categoryId)
-//       .toList();
-// }
+
+  @override
+  String toString() {
+    return 'produto: {preço: $price}';
+  }
 }

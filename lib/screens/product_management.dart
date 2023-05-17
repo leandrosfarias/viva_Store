@@ -58,12 +58,12 @@ class _ProductManagementState extends State<ProductManagement> {
             color: ColorPalette.backgroundColor,
             child: const TabBarView(
               children: [
-                ProductGrid(category: 'tshirt'),
-                ProductGrid(category: 'paintBrush'),
-                ProductGrid(category: 'spa'),
-                ProductGrid(category: 'bed'),
-                ProductGrid(category: 'table'),
-                ProductGrid(category: 'bath'),
+                ProductGrid(category: 'vestuario'),
+                ProductGrid(category: 'decoracao'),
+                ProductGrid(category: 'beleza'),
+                ProductGrid(category: 'cama'),
+                ProductGrid(category: 'mesa'),
+                ProductGrid(category: 'banho'),
               ],
             ),
           ),

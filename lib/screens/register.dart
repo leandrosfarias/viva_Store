@@ -1,46 +1,44 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:viva_store/screens/admin_dashboard.dart';
-import 'package:viva_store/screens/register.dart';
+import 'package:viva_store/screens/login.dart';
 
 import '../services/firebase_auth_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final FirebaseAuthService _authService = FirebaseAuthService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
-  void _signIn() async {
+  void _signUp() async {
     setState(() {
       _isLoading = true;
     });
     try {
-      User? user = await _authService.signIn(
+      User? user = await _authService.signUp(
         email: _emailController.text,
         password: _passwordController.text,
       );
-      // Navegue para a próxima tela após o login bem-sucedido, se necessário
+      // Navigate to the next screen after successful registration, if necessary
       if (user != null) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const AdminDashboard()),
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       } else {
-        // Mostrar mensagem de erro, se necessário
-        print('Falha ao fazer login.');
+        // Show error message, if necessary
+        print('Failed to sign up.');
       }
     } catch (e) {
-      // Lide com os erros de login
-      print('Falha ao fazer login: $e');
-    }
-    finally {
+      // Handle sign up errors
+      print('Failed to sign up: $e');
+    } finally {
       setState(() {
         _isLoading = false;
       });
@@ -69,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // You can adjust the size and other properties as needed
                 Image.asset(
                   'assets/images/user_icon.png',
                   width: 100,
@@ -80,7 +77,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+                    labelStyle:
+                        TextStyle(color: Theme.of(context).primaryColor),
                   ),
                 ),
                 const SizedBox(height: 20.0),
@@ -89,7 +87,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+                    labelStyle:
+                        TextStyle(color: Theme.of(context).primaryColor),
                   ),
                   obscureText: true,
                 ),
@@ -99,44 +98,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     primary: Theme.of(context).accentColor,
                     onPrimary: Theme.of(context).backgroundColor,
                   ),
-                  onPressed: _isLoading ? null : _signIn,
-                  child: const Text('Log In'),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    primary: Theme.of(context).accentColor,
-                  ),
-                  onPressed: () {},
-                  child: const Text('Esqueceu sua senha?'),
-                ),
-                const Spacer(),
-                const Text('Novo usuário?',
-                    style: TextStyle(color: Color(0xFF2F4858))),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    primary: Theme.of(context).accentColor,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                    );
-                  },
-                  child: const Text(
-                    'Registre-se agora',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
+                  onPressed: _isLoading ? null : _signUp,
+                  child: const Text('Sign Up'),
                 ),
               ],
             ),
           ),
           // Add CircularProgressIndicator
-          if (_isLoading)
-            const Center(child: CircularProgressIndicator()),
+          if (_isLoading) const Center(child: CircularProgressIndicator()),
         ],
       ),
     );
   }
-
 }

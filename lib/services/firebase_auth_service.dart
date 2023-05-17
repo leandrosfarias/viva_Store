@@ -5,6 +5,19 @@ class FirebaseAuthService {
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
+  Future<User?> signUp(
+      {required String email, required String password}) async {
+    try {
+      UserCredential userCredential = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      return userCredential.user;
+    } catch (e) {
+      // Handle error
+      print(e);
+      return null;
+    }
+  }
+
   Future<User?> signIn(
       {required String email, required String password}) async {
     try {
