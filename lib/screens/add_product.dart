@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:viva_store/config/color_palette.dart';
+import 'package:viva_store/screens/product_management.dart';
 
 import '../models/product.dart';
 import '../services/firestore_product_service.dart';
@@ -17,13 +18,14 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   List<String> formValues = [];
   final _formKey = GlobalKey<FormState>();
-  final Product _product = Product(
-    name: '',
-    description: '',
-    price: 0.0,
-    imageUrl: '',
-    stockQuantity: 0,
-  );
+
+  // final Product _product = Product(
+  //   name: '',
+  //   description: '',
+  //   price: 0.0,
+  //   imageUrl: '',
+  //   stockQuantity: 0,
+  // );
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
@@ -44,7 +46,6 @@ class _AddProductPageState extends State<AddProductPage> {
   void _saveForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // widget.addProduct(_product);
       _productService.addProduct(
           name: _nameController.text,
           price: double.parse(_priceController.text),
@@ -52,7 +53,8 @@ class _AddProductPageState extends State<AddProductPage> {
           urlImage: _urlImageController.text,
           description: _descriptionController.text,
           stockQuantity: int.parse(_stockQuantityController.text));
-      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const ProductManagement()));
     }
   }
 
@@ -77,9 +79,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     decoration: const InputDecoration(labelText: 'Nome'),
                     textInputAction: TextInputAction.next,
                     controller: _nameController,
-                    onSaved: (value) {
-                      _product.name = value!;
-                    },
+                    // onSaved: (value) {
+                    //   _product.name = value!;
+                    // },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Por favor, insira um nome.';
@@ -91,9 +93,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     decoration: const InputDecoration(labelText: 'Descrição'),
                     textInputAction: TextInputAction.next,
                     controller: _descriptionController,
-                    onSaved: (value) {
-                      _product.description = value!;
-                    },
+                    // onSaved: (value) {
+                    //   _product.description = value!;
+                    // },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Por favor, insira uma descrição.';
@@ -109,9 +111,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     textInputAction: TextInputAction.next,
                     controller: _priceController,
                     keyboardType: TextInputType.number,
-                    onSaved: (value) {
-                      _product.price = double.parse(value!);
-                    },
+                    // onSaved: (value) {
+                    //   _product.price = double.parse(value!);
+                    // },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Por favor, insira um preço.';
@@ -131,9 +133,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     textInputAction: TextInputAction.next,
                     controller: _urlImageController,
                     keyboardType: TextInputType.url,
-                    onSaved: (value) {
-                      _product.imageUrl = value!;
-                    },
+                    // onSaved: (value) {
+                    //   _product.imageUrl = value!;
+                    // },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Por favor, insira uma URL de imagem.';
@@ -175,9 +177,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     textInputAction: TextInputAction.next,
                     controller: _stockQuantityController,
                     keyboardType: TextInputType.number,
-                    onSaved: (value) {
-                      _product.stockQuantity = int.parse(value!);
-                    },
+                    // onSaved: (value) {
+                    //   _product.stockQuantity = int.parse(value!);
+                    // },
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Por favor, insira um valor de quantidade em estoque.';

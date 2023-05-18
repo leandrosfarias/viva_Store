@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Product {
+  String id;
   String name; // Name of the product
   String description; // Description of the product
   double price; // Price of the product
@@ -9,6 +10,7 @@ class Product {
   int stockQuantity; // Number of products in stock
 
   Product({
+    required this.id,
     required this.name,
     required this.description,
     required this.price,
@@ -31,6 +33,7 @@ class Product {
       print('querySnapshot.docs.length => ${querySnapshot.docs.length}');
       for (var doc in querySnapshot.docs) {
         Product product = Product(
+          id: doc['id'],
           name: doc['productName'],
           description: doc['description'],
           price: doc['price'],

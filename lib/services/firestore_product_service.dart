@@ -17,21 +17,35 @@ class FirestoreProductService {
     if (user != null) {
       try {
         // Adicionar o produto ao Firestore
-        await _firestore.collection('products').add({
+        DocumentReference docRef = await _firestore.collection('products').add({
           'productName': name,
           'price': price,
           'userId': user.uid, // Associar o produto ao usuário
           'category': category,
           'urlImage': urlImage,
           'description': description,
-          'stockQuantity': stockQuantity
+          'stockQuantity': stockQuantity,
+          'id': '', // placeholder para o id do documento
         });
+        // Atualizar o documento recém-criado com o seu próprio id
+        await docRef.update({'id': docRef.id});
       } catch (e) {
         // Handle error
         print(e);
       }
     } else {
       print('No user is currently signed in.');
+    }
+  }
+
+  Future<bool> deleteProduct(String productId) async {
+    try {
+      await _firestore.collection('products').doc(productId).delete();
+      return true;
+    } catch (e) {
+      // Handle error
+      print(e);
+      return false;
     }
   }
 }
