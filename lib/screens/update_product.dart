@@ -37,15 +37,17 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
     _priceController.text = widget.product.price.toString();
     _urlImageController.text = widget.product.imageUrl;
     _stockQuantityController.text = widget.product.stockQuantity.toString();
-
+    // print('widget.product.category => ${widget.product.category}');
+    _selectedCategory = widget.product.category;
+    print('_selectedCategory => $_selectedCategory');
     _fetchCategories();
   }
 
   void _saveForm() {
     // print('_saveForm ESTÁ SENDO CHAMADO !');
-    print('_formKey.currentState => ${_formKey.currentState}');
+    // print('_formKey.currentState => ${_formKey.currentState}');
     if (_formKey.currentState!.validate()) {
-      print('_saveForm ENTROU NO IF !');
+      // print('_saveForm ENTROU NO IF !');
       _formKey.currentState!.save();
 
       widget.product.name = _nameController.text;
@@ -59,7 +61,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const ProductManagement()));
     } else {
-      print('_saveForm TA CAINDO NO ELSE !');
+      // print('_saveForm TA CAINDO NO ELSE !');
     }
   }
 
@@ -244,7 +246,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
       // Configurar a primeira categoria como selecionada por padrão
       if (querySnapshot.docs.isNotEmpty) {
         setState(() {
-          _selectedCategory = querySnapshot.docs.first['name'];
+          _selectedCategory = widget.product.category;
         });
       }
     } catch (e) {
