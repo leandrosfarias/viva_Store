@@ -1,7 +1,7 @@
-class Category {
+class String {
   final String name;
 
-  Category({
+  String({
     required this.name,
   });
 }

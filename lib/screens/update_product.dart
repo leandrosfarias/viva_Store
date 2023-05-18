@@ -5,6 +5,7 @@ import 'package:viva_store/screens/product_management.dart';
 import 'package:viva_store/services/firestore_product_service.dart';
 
 import '../config/color_palette.dart';
+import '../services/firestore_categories_service.dart';
 
 class UpdateProductScreen extends StatefulWidget {
   final Product product;
@@ -17,6 +18,9 @@ class UpdateProductScreen extends StatefulWidget {
 
 class _UpdateProductScreenState extends State<UpdateProductScreen> {
   final FirestoreProductService _productService = FirestoreProductService();
+  final FirestoreCategoriesService _categoriesService =
+  FirestoreCategoriesService();
+  late List<String> _categories = [];
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
@@ -26,7 +30,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   final TextEditingController _stockQuantityController =
       TextEditingController();
   String? _selectedCategory = '';
-  final List<String> _categories = [];
+  // final List<String> _categories = [];
   bool _isLoading = false;
 
   @override
@@ -62,6 +66,38 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
           MaterialPageRoute(builder: (context) => const ProductManagement()));
     } else {
       // print('_saveForm TA CAINDO NO ELSE !');
+    }
+  }
+
+  Future<void> _fetchCategories() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Obter a lista de categorias do Firestore
+
+      // Limpar a lista de categorias antes de preenchê-la
+      // _categories.clear();
+
+      var categories = await _categoriesService.getCategories();
+      _categories =
+          categories.map((category) => category).cast<String>().toList();
+
+      // Configurar a primeira categoria como selecionada por padrão
+      if (_categories.isNotEmpty) {
+        print('_categories não está vazia');
+        print('_categories[0] ${_categories[0]}');
+        setState(() {
+          _selectedCategory = widget.product.category;
+        });
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -222,39 +258,5 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
       ),
       if (_isLoading) const Center(child: CircularProgressIndicator()),
     ]);
-  }
-
-  Future<void> _fetchCategories() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Obter a lista de categorias do Firestore
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('category').get();
-
-      // Limpar a lista de categorias antes de preenchê-la
-      _categories.clear();
-
-      // Preencher a lista de categorias com os dados recuperados
-      for (var doc in querySnapshot.docs) {
-        print('dpc => $doc');
-        _categories.add(doc['name']);
-      }
-
-      // Configurar a primeira categoria como selecionada por padrão
-      if (querySnapshot.docs.isNotEmpty) {
-        setState(() {
-          _selectedCategory = widget.product.category;
-        });
-      }
-    } catch (e) {
-      print(e);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 }

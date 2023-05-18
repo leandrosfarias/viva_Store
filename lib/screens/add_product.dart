@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:viva_store/config/color_palette.dart';
 import 'package:viva_store/screens/product_management.dart';
+import 'package:viva_store/services/firestore_categories_service.dart';
 
 import '../services/firestore_product_service.dart';
 
@@ -28,7 +28,9 @@ class _AddProductPageState extends State<AddProductPage> {
   bool _isLoading = false;
   String _selectedCategory = '';
   final FirestoreProductService _productService = FirestoreProductService();
-  final List<String> _categories = [];
+  final FirestoreCategoriesService _categoriesService =
+      FirestoreCategoriesService();
+  late List<String> _categories = [];
 
   @override
   void initState() {
@@ -48,6 +50,38 @@ class _AddProductPageState extends State<AddProductPage> {
           stockQuantity: int.parse(_stockQuantityController.text));
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const ProductManagement()));
+    }
+  }
+
+  Future<void> _fetchCategories() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Obter a lista de categorias do Firestore
+
+      // Limpar a lista de categorias antes de preenchê-la
+      // _categories.clear();
+
+      var categories = await _categoriesService.getCategories();
+      _categories =
+          categories.map((category) => category).cast<String>().toList();
+
+      // Configurar a primeira categoria como selecionada por padrão
+      if (_categories.isNotEmpty) {
+        print('_categories não está vazia');
+        print('_categories[0] ${_categories[0]}');
+        setState(() {
+          _selectedCategory = _categories[0];
+        });
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -210,39 +244,5 @@ class _AddProductPageState extends State<AddProductPage> {
       // Add CircularProgressIndicator
       if (_isLoading) const Center(child: CircularProgressIndicator()),
     ]);
-  }
-
-  Future<void> _fetchCategories() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Obter a lista de categorias do Firestore
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('category').get();
-
-      // Limpar a lista de categorias antes de preenchê-la
-      _categories.clear();
-
-      // Preencher a lista de categorias com os dados recuperados
-      for (var doc in querySnapshot.docs) {
-        print('dpc => $doc');
-        _categories.add(doc['name']);
-      }
-
-      // Configurar a primeira categoria como selecionada por padrão
-      if (querySnapshot.docs.isNotEmpty) {
-        setState(() {
-          _selectedCategory = querySnapshot.docs.first['name'];
-        });
-      }
-    } catch (e) {
-      print(e);
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 }
