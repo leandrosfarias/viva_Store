@@ -18,11 +18,11 @@ class _ProductGridState extends State<ProductGrid> {
   final FirestoreProductService productService = FirestoreProductService();
 
   void loadProducts() {
-    print('FUI CHAMADO !');
+    // print('FUI CHAMADO !');
     futureProducts = Product.getProductsByCategory(widget.category);
     futureProducts.then((List<Product> products) {
       for (Product product in products){
-        print('product.id => ${product.id}');
+        print('product.id  NO GRID => ${product.id}');
       }
     });
   }
@@ -37,6 +37,19 @@ class _ProductGridState extends State<ProductGrid> {
       });
     } else {
       print('Falha ao deletar produto!');
+    }
+  }
+
+  void updateProduct(Product product) async {
+    print('ESTOU TENTANDO ATUALIZAR');
+    bool updateSucessful = await productService.updateProduct(product);
+    if (updateSucessful){
+      print('Produto atualizado com sucesso!');
+      setState(() {
+        loadProducts();
+      });
+    } else {
+      print('Falha ao atualizado produto!');
     }
   }
 
@@ -57,7 +70,7 @@ class _ProductGridState extends State<ProductGrid> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          print('ESTOU POR AQUI !!!');
+          // print('ESTOU POR AQUI !!!');
           List<Product> products = snapshot.data ?? [];
           print('tamanho da lista de produtos => ${products.length}');
           return GridView.builder(
@@ -73,6 +86,7 @@ class _ProductGridState extends State<ProductGrid> {
               return ProductCard(
                 product: products[index],
                 onProductDeleted: removeProduct,
+                onProductUpdate: updateProduct,
               );
             },
           );

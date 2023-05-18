@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:viva_store/screens/update_product.dart';
 
 import '../models/product.dart';
-import '../services/firestore_product_service.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
   final Function(Product) onProductDeleted;
+  final Function(Product) onProductUpdate;
 
-  ProductCard({required this.product, required this.onProductDeleted});
+  ProductCard(
+      {required this.product,
+      required this.onProductDeleted,
+      required this.onProductUpdate});
 
   @override
   Widget build(BuildContext context) {
-    print('ID DO PRODUTO => ${product.id}');
+    // print('ID DO PRODUTO NO CARD => ${product.id}');
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
@@ -53,19 +57,41 @@ class ProductCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // Adicione a lógica para atualizar o produto aqui
-                      },
-                      child: const Text('Atualizar'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => onProductDeleted(product),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.red, // This is the color you want
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(50),
                       ),
-                      child: const Text('Deletar'),
+                      child: IconButton(
+                        onPressed: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UpdateProductScreen(
+                                        product: product,
+                                      )))
+                        },
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 25,
+                        ),
+                        color: Colors.white,
+                      ),
                     ),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: IconButton(
+                        onPressed: () => onProductDeleted(product),
+                        icon: const Icon(
+                          Icons.delete,
+                          size: 25,
+                        ),
+                        color: Colors.white,
+                      ),
+                    )
                   ],
                 ),
               ],

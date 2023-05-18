@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:viva_store/models/product.dart';
 
 class FirestoreProductService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -45,6 +46,19 @@ class FirestoreProductService {
     } catch (e) {
       // Handle error
       print(e);
+      return false;
+    }
+  }
+
+  Future<bool> updateProduct(Product product) async {
+    try {
+      await _firestore
+          .collection('products')
+          .doc(product.id)
+          .update(product.toMap());
+      return true;
+    } catch (e) {
+      print('EXCEÇÃO => $e');
       return false;
     }
   }

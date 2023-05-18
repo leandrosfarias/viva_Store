@@ -1,21 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:viva_store/config/color_palette.dart';
+import 'package:viva_store/models/product.dart';
 import 'package:viva_store/screens/product_management.dart';
+import 'package:viva_store/services/firestore_product_service.dart';
 
-import '../services/firestore_product_service.dart';
+import '../config/color_palette.dart';
 
-class AddProductPage extends StatefulWidget {
-  final Function addProduct;
+class UpdateProductScreen extends StatefulWidget {
+  final Product product;
 
-  const AddProductPage(this.addProduct, {Key? key}) : super(key: key);
+  const UpdateProductScreen({required this.product}) : super();
 
   @override
-  _AddProductPageState createState() => _AddProductPageState();
+  State<UpdateProductScreen> createState() => _UpdateProductScreenState();
 }
 
-class _AddProductPageState extends State<AddProductPage> {
-  List<String> formValues = [];
+class _UpdateProductScreenState extends State<UpdateProductScreen> {
+  final FirestoreProductService _productService = FirestoreProductService();
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
@@ -24,30 +25,41 @@ class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController _urlImageController = TextEditingController();
   final TextEditingController _stockQuantityController =
       TextEditingController();
-
-  bool _isLoading = false;
-  String _selectedCategory = '';
-  final FirestoreProductService _productService = FirestoreProductService();
+  String? _selectedCategory = '';
   final List<String> _categories = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _nameController.text = widget.product.name;
+    _descriptionController.text = widget.product.description;
+    _priceController.text = widget.product.price.toString();
+    _urlImageController.text = widget.product.imageUrl;
+    _stockQuantityController.text = widget.product.stockQuantity.toString();
+
     _fetchCategories();
   }
 
   void _saveForm() {
+    // print('_saveForm ESTÁ SENDO CHAMADO !');
+    print('_formKey.currentState => ${_formKey.currentState}');
     if (_formKey.currentState!.validate()) {
+      print('_saveForm ENTROU NO IF !');
       _formKey.currentState!.save();
-      _productService.addProduct(
-          name: _nameController.text,
-          price: double.parse(_priceController.text),
-          category: _selectedCategory,
-          urlImage: _urlImageController.text,
-          description: _descriptionController.text,
-          stockQuantity: int.parse(_stockQuantityController.text));
+
+      widget.product.name = _nameController.text;
+      widget.product.description = _descriptionController.text;
+      widget.product.price = double.parse(_priceController.text);
+      widget.product.imageUrl = _urlImageController.text;
+      widget.product.category = _selectedCategory!;
+      widget.product.stockQuantity = int.parse(_stockQuantityController.text);
+      // atualiza produto
+      _productService.updateProduct(widget.product);
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const ProductManagement()));
+    } else {
+      print('_saveForm TA CAINDO NO ELSE !');
     }
   }
 
@@ -56,8 +68,7 @@ class _AddProductPageState extends State<AddProductPage> {
     return Stack(children: <Widget>[
       Scaffold(
         appBar: AppBar(
-          title: const Text('Cadastrar Produto'),
-          backgroundColor: ColorPalette.primaryColor,
+          title: const Text("Atualizar produto"),
         ),
         body: Container(
           color: ColorPalette.backgroundColor,
@@ -149,7 +160,7 @@ class _AddProductPageState extends State<AddProductPage> {
                         value: _selectedCategory,
                         onChanged: (String? newValue) {
                           setState(() {
-                            _selectedCategory = newValue!;
+                            _selectedCategory = newValue;
                           });
                         },
                         items: _categories
@@ -194,7 +205,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           ColorPalette.secondaryColor),
                     ),
                     child: const Text(
-                      'Cadastrar',
+                      'Confirmar',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -207,7 +218,6 @@ class _AddProductPageState extends State<AddProductPage> {
           ),
         ),
       ),
-      // Add CircularProgressIndicator
       if (_isLoading) const Center(child: CircularProgressIndicator()),
     ]);
   }
