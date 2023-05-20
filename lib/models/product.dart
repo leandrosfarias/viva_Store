@@ -11,7 +11,7 @@ class Product {
   int stockQuantity; // Number of products in stock
 
   Product({
-    required this.id,
+    this.id = '',
     required this.name,
     required this.category,
     required this.description,
@@ -26,7 +26,7 @@ class Product {
     try {
       // print('CATEGORIA => ${category}');
       List<Product> products = [];
-      // Obter a lista de categorias do Firestore
+      // Obter a lista de produtos filtrando por categoria do Firestore
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('products')
           .where('category', isEqualTo: category)
@@ -36,7 +36,7 @@ class Product {
       for (var doc in querySnapshot.docs) {
         Product product = Product(
           id: doc['id'],
-          name: doc['productName'],
+          name: doc['name'],
           category: doc['category'],
           description: doc['description'],
           price: doc['price'],
@@ -64,6 +64,7 @@ class Product {
     return {
       'id': id,
       'name': name,
+      'category': category,
       'description': description,
       'price': price,
       'imageUrl': imageUrl,

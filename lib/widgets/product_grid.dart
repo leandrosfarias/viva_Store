@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:viva_store/providers/productProvider.dart';
 import 'package:viva_store/widgets/product_card.dart';
 
 import '../models/product.dart';
@@ -18,20 +20,21 @@ class _ProductGridState extends State<ProductGrid> {
   final FirestoreProductService productService = FirestoreProductService();
 
   void loadProducts() {
-    // print('FUI CHAMADO !');
+    // print('loadProducts FOI CHAMADO !');
     futureProducts = Product.getProductsByCategory(widget.category);
-    futureProducts.then((List<Product> products) {
-      for (Product product in products){
-        print('product.id  NO GRID => ${product.id}');
-      }
-    });
+    // futureProducts.then((List<Product> products) {
+    //   for (Product product in products){
+    //     print('product.id  NO GRID => ${product.id}');
+    //   }
+    // });
   }
 
-  void removeProduct(Product product) async {
-    print('ESTOU TENTANDO DELETAR!');
-    bool deletionSucessful = await productService.deleteProduct(product.id);
+  void removeProduct(String productId) async {
+    print('Estou tentando deletar produto, cujo id é => $productId');
+    bool deletionSucessful = await productService.deleteProduct(productId);
     if (deletionSucessful) {
       print('Produto deletado com sucesso!');
+      //
       setState(() {
         loadProducts();
       });
@@ -41,11 +44,13 @@ class _ProductGridState extends State<ProductGrid> {
   }
 
   void updateProduct(Product product) async {
-    print('ESTOU TENTANDO ATUALIZAR');
+    print('updateProduct FOI CHAMADO !');
     bool updateSucessful = await productService.updateProduct(product);
-    if (updateSucessful){
-      print('Produto atualizado com sucesso!');
+    if (updateSucessful) {
+      // print('Produto atualizado com sucesso! ${product.imageUrl}');
+      //
       setState(() {
+        print('updateProduct foi reconstruído');
         loadProducts();
       });
     } else {
@@ -55,43 +60,35 @@ class _ProductGridState extends State<ProductGrid> {
 
   @override
   void initState() {
-    print('ESTOU SENDO CRIADO!');
+    // print('ESTOU SENDO CRIADO!');
     super.initState();
     loadProducts();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Product>>(
-      future: futureProducts,
-      builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          // print('ESTOU POR AQUI !!!');
-          List<Product> products = snapshot.data ?? [];
-          print('tamanho da lista de produtos => ${products.length}');
-          return GridView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: products.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3 / 5,
-              crossAxisSpacing: 6,
-              mainAxisSpacing: 100000,
-            ),
-            itemBuilder: (context, index) {
-              return ProductCard(
-                product: products[index],
-                onProductDeleted: removeProduct,
-                onProductUpdate: updateProduct,
-              );
-            },
+    return Consumer<ProductProvider>(
+      builder: (context, productProvider, _) => GridView.builder(
+        padding: const EdgeInsets.all(10.0),
+        itemCount: productProvider.products
+            .where((product) => product.category == widget.category)
+            .length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 3 / 5,
+          crossAxisSpacing: 6,
+          mainAxisSpacing: 10,
+        ),
+        itemBuilder: (context, index) {
+          return ProductCard(
+            product: productProvider.products
+                .where((product) => product.category == widget.category)
+                .toList()[index],
+            onProductDeleted: productProvider.deleteProduct,
+            onProductUpdate: productProvider.updateProduct,
           );
-        }
-      },
+        },
+      ),
     );
   }
 }

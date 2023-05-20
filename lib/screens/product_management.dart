@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:viva_store/config/color_palette.dart';
 import 'package:viva_store/widgets/product_grid.dart';
 
-import '../models/product.dart';
 import 'add_product.dart';
 
 class ProductManagement extends StatefulWidget {
@@ -14,11 +13,13 @@ class ProductManagement extends StatefulWidget {
 }
 
 class _ProductManagementState extends State<ProductManagement> {
-  final List<Product> _products = [];
+  // final List<Product> _products = [];
 
-  void _addProduct(Product product) {
+  void _addProduct() {
+    print('_addProduct esta sendo chamado');
     setState(() {
-      _products.add(product);
+      print('E esta reconstruindo ProductManagement');
+      // _products.add(product);
     });
   }
 
@@ -75,8 +76,7 @@ class _ProductManagementState extends State<ProductManagement> {
               );
             },
             backgroundColor: ColorPalette.secondaryColor,
-            child: const Icon(
-                Icons.add),
+            child: const Icon(Icons.add),
           ),
         ));
   }

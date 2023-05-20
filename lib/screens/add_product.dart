@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:viva_store/config/color_palette.dart';
+import 'package:viva_store/models/product.dart';
 import 'package:viva_store/screens/product_management.dart';
 import 'package:viva_store/services/firestore_categories_service.dart';
 
+import '../providers/productProvider.dart';
 import '../services/firestore_product_service.dart';
 
 class AddProductPage extends StatefulWidget {
@@ -41,15 +44,29 @@ class _AddProductPageState extends State<AddProductPage> {
   void _saveForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      _productService.addProduct(
+
+      // _productService.addProduct(
+      //     name: _nameController.text,
+      //     price: double.parse(_priceController.text),
+      //     category: _selectedCategory,
+      //     urlImage: _urlImageController.text,
+      //     description: _descriptionController.text,
+      //     stockQuantity: int.parse(_stockQuantityController.text));
+
+      final productProvider =
+          Provider.of<ProductProvider>(context, listen: false);
+      var newProduct = Product(
           name: _nameController.text,
-          price: double.parse(_priceController.text),
           category: _selectedCategory,
-          urlImage: _urlImageController.text,
           description: _descriptionController.text,
+          price: double.parse(_priceController.text),
+          imageUrl: _urlImageController.text,
           stockQuantity: int.parse(_stockQuantityController.text));
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const ProductManagement()));
+      productProvider.addProduct(newProduct);
+
+      Navigator.of(context).pop();
+      // Navigator.of(context).pushReplacement(
+      //     MaterialPageRoute(builder: (context) => const ProductManagement()));
     }
   }
 

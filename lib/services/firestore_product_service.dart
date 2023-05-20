@@ -19,7 +19,7 @@ class FirestoreProductService {
       try {
         // Adicionar o produto ao Firestore
         DocumentReference docRef = await _firestore.collection('products').add({
-          'productName': name,
+          'name': name,
           'price': price,
           'userId': user.uid, // Associar o produto ao usuário
           'category': category,
@@ -39,15 +39,21 @@ class FirestoreProductService {
     }
   }
 
-  Future<bool> deleteProduct(String productId) async {
-    try {
-      await _firestore.collection('products').doc(productId).delete();
-      return true;
-    } catch (e) {
-      // Handle error
-      print(e);
-      return false;
+  Future<List<Product>> getProducts() async {
+    final response = await _firestore.collection('products').get();
+    List<Product> products = [];
+    //
+    for (var doc in response.docs) {
+      products.add(Product(
+          id: doc['id'],
+          name: doc['name'],
+          category: doc['category'],
+          description: doc['description'],
+          price: doc['price'],
+          imageUrl: doc['imageUrl']));
     }
+    //
+    return products;
   }
 
   Future<bool> updateProduct(Product product) async {
@@ -59,6 +65,17 @@ class FirestoreProductService {
       return true;
     } catch (e) {
       print('EXCEÇÃO => $e');
+      return false;
+    }
+  }
+
+  Future<bool> deleteProduct(String productId) async {
+    try {
+      await _firestore.collection('products').doc(productId).delete();
+      return true;
+    } catch (e) {
+      // Handle error
+      print('Exceção em deleteProduct => $e');
       return false;
     }
   }

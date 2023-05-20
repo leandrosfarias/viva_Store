@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:viva_store/screens/update_product.dart';
+import 'package:viva_store/screens/update_product_screen.dart';
 
 import '../models/product.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
-  final Function(Product) onProductDeleted;
+  final Function(String) onProductDeleted;
   final Function(Product) onProductUpdate;
 
   ProductCard(
@@ -69,6 +69,7 @@ class ProductCard extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (context) => UpdateProductScreen(
                                         product: product,
+                                    updateProduct: onProductUpdate,
                                       )))
                         },
                         icon: const Icon(
@@ -84,7 +85,11 @@ class ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: IconButton(
-                        onPressed: () => onProductDeleted(product),
+                        onPressed: () => {
+                          print('Botão de deletar pressionado'),
+                          print('Em card, product.name é => ${product.name}'),
+                          onProductDeleted(product.id)
+                        },
                         icon: const Icon(
                           Icons.delete,
                           size: 25,

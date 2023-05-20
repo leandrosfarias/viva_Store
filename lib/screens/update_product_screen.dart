@@ -9,8 +9,8 @@ import '../services/firestore_categories_service.dart';
 
 class UpdateProductScreen extends StatefulWidget {
   final Product product;
-
-  const UpdateProductScreen({required this.product}) : super();
+  final Function updateProduct;
+  const UpdateProductScreen({required this.product, required this.updateProduct}) : super();
 
   @override
   State<UpdateProductScreen> createState() => _UpdateProductScreenState();
@@ -51,19 +51,22 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
     // print('_saveForm ESTÁ SENDO CHAMADO !');
     // print('_formKey.currentState => ${_formKey.currentState}');
     if (_formKey.currentState!.validate()) {
-      // print('_saveForm ENTROU NO IF !');
+      print('_saveForm ENTROU NO IF !');
       _formKey.currentState!.save();
 
       widget.product.name = _nameController.text;
       widget.product.description = _descriptionController.text;
       widget.product.price = double.parse(_priceController.text);
       widget.product.imageUrl = _urlImageController.text;
+      print('nova categoria setado => $_selectedCategory');
       widget.product.category = _selectedCategory!;
       widget.product.stockQuantity = int.parse(_stockQuantityController.text);
       // atualiza produto
-      _productService.updateProduct(widget.product);
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const ProductManagement()));
+      // _productService.updateProduct(widget.product);
+      widget.updateProduct(widget.product);
+      Navigator.of(context).pop();
+      // Navigator.of(context).pushReplacement(
+      //     MaterialPageRoute(builder: (context) => const ProductManagement()));
     } else {
       // print('_saveForm TA CAINDO NO ELSE !');
     }
@@ -86,8 +89,9 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
 
       // Configurar a primeira categoria como selecionada por padrão
       if (_categories.isNotEmpty) {
-        print('_categories não está vazia');
-        print('_categories[0] ${_categories[0]}');
+        // print('_categories não está vazia');
+        // print('_categories posição zero => ${_categories[0]}');
+        print('widget.product.category => ${widget.product.category}');
         setState(() {
           _selectedCategory = widget.product.category;
         });
@@ -197,6 +201,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
                       child: DropdownButton<String>(
                         value: _selectedCategory,
                         onChanged: (String? newValue) {
+                          print('novo valor de categoria => $newValue');
                           setState(() {
                             _selectedCategory = newValue;
                           });
