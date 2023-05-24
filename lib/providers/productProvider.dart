@@ -9,13 +9,31 @@ class ProductProvider extends ChangeNotifier {
 
   final FirestoreProductService _firestoreProductService =
       FirestoreProductService();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore_instance = FirebaseFirestore.instance;
 
   ProductProvider() {
     fetchProducts();
   }
 
   List<Product> get products => _products;
+
+  Stream<List<Product>> get productStream {
+    print('get productStream foi chamado');
+    return _firestore_instance
+        .collection('products')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Product(
+                  id: doc['id'],
+                  name: doc['name'],
+                  category: doc['category'],
+                  description: doc['description'],
+                  price: doc['price'],
+                  imageUrl: doc['urlImage'],
+                  stockQuantity: doc['stockQuantity'],
+                ))
+            .toList());
+  }
 
   void addProduct(Product product) {
     _firestoreProductService.addProduct(
@@ -51,7 +69,7 @@ class ProductProvider extends ChangeNotifier {
 
   void fetchProducts() async {
     print('fetchProducts de productProvider foi chamado');
-    QuerySnapshot querySnapshot = await _firestore.collection('products').get();
+    QuerySnapshot querySnapshot = await _firestore_instance.collection('products').get();
     print('querySnapshot.docs.length => ${querySnapshot.docs.length}');
     for (var doc in querySnapshot.docs) {
       print('product.name => ${doc['name']}');
@@ -85,7 +103,7 @@ class ProductProvider extends ChangeNotifier {
 
   Future<List<Product>> fetchProductsByCategory(String category) async {
     // Obter a lista de produtos filtrando por categoria do Firestore
-    QuerySnapshot querySnapshot = await _firestore
+    QuerySnapshot querySnapshot = await _firestore_instance
         .collection('products')
         .where('category', isEqualTo: category)
         .get();

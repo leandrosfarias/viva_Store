@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:viva_store/models/product.dart';
 
 class FirestoreProductService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestoreInstance = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> addProduct(
@@ -18,7 +18,8 @@ class FirestoreProductService {
     if (user != null) {
       try {
         // Adicionar o produto ao Firestore
-        DocumentReference docRef = await _firestore.collection('products').add({
+        DocumentReference docRef =
+            await _firestoreInstance.collection('products').add({
           'name': name,
           'price': price,
           'userId': user.uid, // Associar o produto ao usuário
@@ -40,7 +41,7 @@ class FirestoreProductService {
   }
 
   Future<List<Product>> getProducts() async {
-    final response = await _firestore.collection('products').get();
+    final response = await _firestoreInstance.collection('products').get();
     List<Product> products = [];
     //
     for (var doc in response.docs) {
@@ -58,7 +59,7 @@ class FirestoreProductService {
 
   Future<bool> updateProduct(Product product) async {
     try {
-      await _firestore
+      await _firestoreInstance
           .collection('products')
           .doc(product.id)
           .update(product.toMap());
@@ -71,11 +72,11 @@ class FirestoreProductService {
 
   Future<bool> deleteProduct(String productId) async {
     try {
-      await _firestore.collection('products').doc(productId).delete();
+      await _firestoreInstance.collection('products').doc(productId).delete();
       return true;
     } catch (e) {
       // Handle error
-      print('Exceção em deleteProduct => $e');
+      print('Exceção em deleteProduct de FirestoreProductService => $e');
       return false;
     }
   }

@@ -10,7 +10,9 @@ import '../services/firestore_categories_service.dart';
 class UpdateProductScreen extends StatefulWidget {
   final Product product;
   final Function updateProduct;
-  const UpdateProductScreen({required this.product, required this.updateProduct}) : super();
+
+  const UpdateProductScreen(
+      {super.key, required this.product, required this.updateProduct});
 
   @override
   State<UpdateProductScreen> createState() => _UpdateProductScreenState();
@@ -19,7 +21,7 @@ class UpdateProductScreen extends StatefulWidget {
 class _UpdateProductScreenState extends State<UpdateProductScreen> {
   final FirestoreProductService _productService = FirestoreProductService();
   final FirestoreCategoriesService _categoriesService =
-  FirestoreCategoriesService();
+      FirestoreCategoriesService();
   late List<String> _categories = [];
   final _formKey = GlobalKey<FormState>();
 
@@ -30,6 +32,7 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   final TextEditingController _stockQuantityController =
       TextEditingController();
   String? _selectedCategory = '';
+
   // final List<String> _categories = [];
   bool _isLoading = false;
 

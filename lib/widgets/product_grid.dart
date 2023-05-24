@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:viva_store/providers/productProvider.dart';
@@ -8,8 +9,15 @@ import '../services/firestore_product_service.dart';
 
 class ProductGrid extends StatefulWidget {
   final String category;
+  final Function(String) onDeleteProduct;
+  final Function(Product product) onUpdateProduct;
 
-  const ProductGrid({Key? key, required this.category}) : super(key: key);
+  const ProductGrid(
+      {Key? key,
+      required this.category,
+      required this.onDeleteProduct,
+      required this.onUpdateProduct})
+      : super(key: key);
 
   @override
   State<ProductGrid> createState() => _ProductGridState();
@@ -18,77 +26,62 @@ class ProductGrid extends StatefulWidget {
 class _ProductGridState extends State<ProductGrid> {
   late Future<List<Product>> futureProducts;
   final FirestoreProductService productService = FirestoreProductService();
-
-  void loadProducts() {
-    // print('loadProducts FOI CHAMADO !');
-    futureProducts = Product.getProductsByCategory(widget.category);
-    // futureProducts.then((List<Product> products) {
-    //   for (Product product in products){
-    //     print('product.id  NO GRID => ${product.id}');
-    //   }
-    // });
-  }
-
-  void removeProduct(String productId) async {
-    print('Estou tentando deletar produto, cujo id é => $productId');
-    bool deletionSucessful = await productService.deleteProduct(productId);
-    if (deletionSucessful) {
-      print('Produto deletado com sucesso!');
-      //
-      setState(() {
-        loadProducts();
-      });
-    } else {
-      print('Falha ao deletar produto!');
-    }
-  }
-
-  void updateProduct(Product product) async {
-    print('updateProduct FOI CHAMADO !');
-    bool updateSucessful = await productService.updateProduct(product);
-    if (updateSucessful) {
-      // print('Produto atualizado com sucesso! ${product.imageUrl}');
-      //
-      setState(() {
-        print('updateProduct foi reconstruído');
-        loadProducts();
-      });
-    } else {
-      print('Falha ao atualizado produto!');
-    }
-  }
+  final double itemWidth = 200;
+  final ProductProvider productProvider = ProductProvider();
 
   @override
   void initState() {
-    // print('ESTOU SENDO CRIADO!');
+    print('productGrid esta sendo criado');
     super.initState();
-    loadProducts();
+    // productProvider.fetchProducts();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProductProvider>(
-      builder: (context, productProvider, _) => GridView.builder(
-        padding: const EdgeInsets.all(10.0),
-        itemCount: productProvider.products
-            .where((product) => product.category == widget.category)
-            .length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3 / 5,
-          crossAxisSpacing: 6,
-          mainAxisSpacing: 10,
-        ),
-        itemBuilder: (context, index) {
-          return ProductCard(
-            product: productProvider.products
-                .where((product) => product.category == widget.category)
-                .toList()[index],
-            onProductDeleted: productProvider.deleteProduct,
-            onProductUpdate: productProvider.updateProduct,
+    var screenWidth = MediaQuery.of(context).size.width;
+    var crossAxisCount = (screenWidth / itemWidth).floor();
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('products').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final products = snapshot.data!.docs
+              .map((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                return Product(
+                    id: doc.id,
+                    name: data['name'],
+                    category: data['category'],
+                    description: data['description'],
+                    price: data['price'],
+                    imageUrl: data['urlImage'],
+                    stockQuantity: data['stockQuantity']
+                    // ... adicione outras propriedades do produto
+                    );
+              })
+              // filtrando por categoria
+              .where((element) => element.category == widget.category)
+              .toList();
+
+          return GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: 3 / 4.9,
+            ),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final product = products[index];
+              return ProductCard(
+                  product: product,
+                  onProductDeleted: widget.onDeleteProduct,
+                  onProductUpdate: widget.onUpdateProduct);
+            },
           );
-        },
-      ),
+        } else if (snapshot.hasError) {
+          return Text('Erro ao carregar produtos');
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
     );
   }
 }

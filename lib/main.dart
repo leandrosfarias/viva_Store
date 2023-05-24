@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:viva_store/config/color_palette.dart';
 import 'package:viva_store/providers/productProvider.dart';
+import 'package:viva_store/screens/admin_dashboard.dart';
 import 'package:viva_store/screens/login.dart';
 
 import 'firebase_options.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: ColorPalette.backgroundColor,
         // fontFamily: 'RobotoMono'
       ),
-      home: const LoginScreen(),
+      home: const AdminDashboard(),
     );
   }
 }
