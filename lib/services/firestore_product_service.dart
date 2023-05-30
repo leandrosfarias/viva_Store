@@ -14,29 +14,25 @@ class FirestoreProductService {
       required description,
       required stockQuantity}) async {
     // Obter o usuário atual
-    User? user = _auth.currentUser;
-    if (user != null) {
-      try {
-        // Adicionar o produto ao Firestore
-        DocumentReference docRef =
-            await _firestoreInstance.collection('products').add({
-          'name': name,
-          'price': price,
-          'userId': user.uid, // Associar o produto ao usuário
-          'category': category,
-          'urlImage': urlImage,
-          'description': description,
-          'stockQuantity': stockQuantity,
-          'id': '', // placeholder para o id do documento
-        });
-        // Atualizar o documento recém-criado com o seu próprio id
-        await docRef.update({'id': docRef.id});
-      } catch (e) {
-        // Handle error
-        print(e);
-      }
-    } else {
-      print('No user is currently signed in.');
+    // User? user = _auth.currentUser;
+    try {
+      // Adicionar o produto ao Firestore
+      DocumentReference docRef =
+          await _firestoreInstance.collection('products').add({
+        'name': name,
+        'price': price,
+        // 'userId': user.uid, // Associar o produto ao usuário
+        'category': category,
+        'urlImage': urlImage,
+        'description': description,
+        'stockQuantity': stockQuantity,
+        'id': '', // placeholder para o id do documento
+      });
+      // Atualizar o documento recém-criado com o seu próprio id
+      await docRef.update({'id': docRef.id});
+    } catch (e) {
+      // Handle error
+      print(e);
     }
   }
 

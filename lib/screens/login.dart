@@ -70,10 +70,9 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 // You can adjust the size and other properties as needed
-                Image.asset(
-                  'assets/images/user_icon.png',
-                  width: 100,
-                  height: 100,
+                Icon(
+                    Icons.account_circle_rounded,
+                  size: 70,
                 ),
                 TextFormField(
                   controller: _emailController,

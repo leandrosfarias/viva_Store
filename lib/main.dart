@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: ColorPalette.backgroundColor,
         // fontFamily: 'RobotoMono'
       ),
-      home: const AdminDashboard(),
+      home: const LoginScreen(),
     );
   }
 }

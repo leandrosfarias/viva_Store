@@ -67,10 +67,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset(
-                  'assets/images/user_icon.png',
-                  width: 100,
-                  height: 100,
+                Icon(
+                  Icons.account_circle_rounded,
+                  size: 70,
                 ),
                 TextFormField(
                   controller: _emailController,
